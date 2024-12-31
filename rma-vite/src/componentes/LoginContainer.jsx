@@ -9,7 +9,7 @@ if (window.location.hostname === 'localhost') {
   url = 'http://localhost:8080';
 }
 
-export function LoginContainer() {  // Cambia a exportación nombrada
+export function LoginContainer() {  
   const [formData, setFormData] = useState({
     nombre: '',
     password: '',

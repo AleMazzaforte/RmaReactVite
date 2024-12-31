@@ -1,29 +1,30 @@
 import React, { useState } from 'react';
-import { BusquedaClientes } from './utilidades/BusquedaClientes';
-
-
+import { BusquedaClientes } from './utilidades/BusquedaClientes.jsx';
+import { BusquedaProductos } from './utilidades/ListarProductos.jsx';
 
 export const CargarRma = () => {
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
-  const [clienteSeleccionado, setClienteSeleccionado] = useState(null); 
-  const handleClienteSeleccionado = (cliente) => { 
-    setClienteSeleccionado(cliente); 
+  const handleClienteSeleccionado = (cliente) => {
+    setClienteSeleccionado(cliente);
   };
-  
-  const sugerirModelos = async (e) => {
-  }
-  
-  const sugerirMarcas = async (e) => {
-  }
-  
-  
-  const enviarFormulario = async (e) => {
-  }
 
-  let url = 'https://rmareactviteback.onrender.com/buscarCliente';
- 
+  const handleProductoSeleccionado = (producto) => {
+    setProductoSeleccionado(producto);
+  };
+
+  const enviarFormulario = async (e) => {
+    e.preventDefault();
+    // Lógica para enviar el formulario
+  };
+
+  let urlClientes = 'https://rmareactviteback.onrender.com/buscarCliente';
+  let urlProductos = 'https://rmareactviteback.onrender.com/buscarProductos';
+
   if (window.location.hostname === 'localhost') {
-    url = 'http://localhost:8080/buscarCliente';
+    urlClientes = 'http://localhost:8080/buscarCliente';
+    urlProductos = 'http://localhost:8080/buscarProductos';
   }
 
   return (
@@ -34,17 +35,18 @@ export const CargarRma = () => {
         </div>
       </div>
       <h2 className="text-2xl font-semibold text-gray-700 text-center mb-8">Cargar RMA</h2>
-      <form id="formRma" action="/agregarRma" method="POST" className="space-y-6"> 
-        <div> 
-          <label htmlFor="clienteSearch" className="block text-sm font-medium text-gray-700 mb-1">Cliente:</label> 
-            <BusquedaClientes endpoint= {url} onClienteSeleccionado={handleClienteSeleccionado} campos={['nombre']} /> 
-          </div> 
-          {clienteSeleccionado && ( <input type="hidden" name="idCliente" value={clienteSeleccionado.id} /> )}
+      <form id="formRma" action="/agregarRma" method="POST" className="space-y-6" onSubmit={enviarFormulario}>
+        <div>
+          <label htmlFor="clienteSearch" className="block text-sm font-medium text-gray-700 mb-1">Cliente:</label>
+          <BusquedaClientes endpoint={urlClientes} onClienteSeleccionado={handleClienteSeleccionado} campos={['nombre']} />
+        </div>
+        {clienteSeleccionado && (<input type="hidden" name="idCliente" value={clienteSeleccionado.id} />)}
 
         <div>
           <label htmlFor="modelo" className="block text-sm font-medium text-gray-700 mb-1 campoOculto">SKU:</label>
-          <input type="text" id="modelo" name="modelo" min="1" className="block w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none campoOculto" required autoComplete="off" />
+          <BusquedaProductos endpoint={urlProductos} onProductoSeleccionado={handleProductoSeleccionado} campos={['sku']} />
         </div>
+        {productoSeleccionado && (<input type="hidden" name="idProducto" value={productoSeleccionado.id} />)}
 
         <div className="divrelleno"></div>
         <div id="suggestionsContainer2" style={{ display: 'none' }}></div>
@@ -104,12 +106,13 @@ export const CargarRma = () => {
         <input type="hidden" id="idCliente" name="idCliente" />
 
         <div>
-          <button type="submit" id="botonCargar" className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 campoOculto" disabled onClick={() => enviarFormulario()}>Cargar RMA</button>
+          <button type="submit" id="botonCargar" className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300 campoOculto" disabled={!productoSeleccionado}>Cargar RMA</button>
         </div>
       </form>
     </div>
   );
-}
+};
+
 
 
 

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { FlechasNavigator } from './FlechasNavigator';
 import Loader from './Loader';
 
-export const BusquedaClientes = ({ endpoint, onClienteSeleccionado, campos }) => {
+export const BusquedaProductos = ({ endpoint, onProductoSeleccionado, campos }) => {
   const [query, setQuery] = useState('');
   const [resultados, setResultados] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -21,10 +21,10 @@ export const BusquedaClientes = ({ endpoint, onClienteSeleccionado, campos }) =>
       try {
         const response = await fetch(`${endpoint}?query=${value}`);
         const data = await response.json();
-        setResultados(data.filter(cliente => cliente.nombre.toLowerCase().includes(value.toLowerCase())));
+        setResultados(data.filter(producto => producto.sku.toLowerCase().includes(value.toLowerCase())));
         console.log(data);
       } catch (error) {
-        console.error('Error buscando clientes:', error);
+        console.error('Error buscando productos:', error);
       } finally {
         clearTimeout(newTimer);  // Limpiar el temporizador si el fetch finaliza antes de los 3 segundos
         setLoading(false);
@@ -35,11 +35,11 @@ export const BusquedaClientes = ({ endpoint, onClienteSeleccionado, campos }) =>
     }
   };
 
-  const handleClienteSeleccionado = (cliente) => {
-    if (cliente) {
-      onClienteSeleccionado(cliente);
+  const handleProductoSeleccionado = (producto) => {
+    if (producto) {
+      onProductoSeleccionado(producto);
       setResultados([]);
-      setQuery(cliente.nombre);  // Mostrar el nombre seleccionado en el input
+      setQuery(producto.sku);  // Mostrar el SKU seleccionado en el input
       inputRef.current.nextElementSibling?.focus();  // Saltar al siguiente campo
     }
   };
@@ -51,20 +51,17 @@ export const BusquedaClientes = ({ endpoint, onClienteSeleccionado, campos }) =>
         ref={inputRef}
         value={query}
         onChange={handleInputChange}
-        placeholder="Buscar cliente"
+        placeholder="Buscar SKU"
         className="block w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none"
       />
       {loading ? <Loader /> : (
         <FlechasNavigator
           resultados={resultados}
-          onClienteSeleccionado={handleClienteSeleccionado}
+          onClienteSeleccionado={handleProductoSeleccionado}
           campos={campos}
         />
       )}
     </div>
   );
 };
-
-
-
 
