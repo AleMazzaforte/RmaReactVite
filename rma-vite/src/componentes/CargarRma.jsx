@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BusquedaClientes } from './utilidades/busquedaClientes';
+import { BusquedaClientes } from './utilidades/BusquedaClientes';
 
 
 
@@ -20,6 +20,12 @@ export const CargarRma = () => {
   const enviarFormulario = async (e) => {
   }
 
+  let url = 'https://rmareactviteback.onrender.com/buscarCliente';
+ 
+  if (window.location.hostname === 'localhost') {
+    url = 'http://localhost:8080/buscarCliente';
+  }
+
   return (
     <div className="w-full max-w-xl bg-white rounded-lg shadow-lg shadow-gray-500 p-8 mx-auto mb-6" style={{ maxWidth: '600px', boxShadow: '0 -10px 20px rgba(0, 0, 0, 0.3)' }}>
       <div className="flex justify-center mb-6">
@@ -31,7 +37,7 @@ export const CargarRma = () => {
       <form id="formRma" action="/agregarRma" method="POST" className="space-y-6"> 
         <div> 
           <label htmlFor="clienteSearch" className="block text-sm font-medium text-gray-700 mb-1">Cliente:</label> 
-            <BusquedaClientes endpoint="http://localhost:8080/buscarCliente" onClienteSeleccionado={handleClienteSeleccionado} campos={['nombre']} /> 
+            <BusquedaClientes endpoint= {url} onClienteSeleccionado={handleClienteSeleccionado} campos={['nombre']} /> 
           </div> 
           {clienteSeleccionado && ( <input type="hidden" name="idCliente" value={clienteSeleccionado.id} /> )}
 

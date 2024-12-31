@@ -3,7 +3,7 @@ import '../styles/App.css';
 import Swal from 'sweetalert2';
 
 // Determinar la URL de la API según la url
-let url = 'https://rma-react-server.vercel.app';
+let url = 'https://rmareactviteback.onrender.com';
  
 if (window.location.hostname === 'localhost') {
   url = 'http://localhost:8080';
