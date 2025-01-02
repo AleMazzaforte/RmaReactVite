@@ -1,31 +1,92 @@
-import React, { useState } from 'react';
-import { BusquedaClientes } from './utilidades/BusquedaClientes.jsx';
-import { BusquedaProductos } from './utilidades/ListarProductos.jsx';
+import React, { useState } from 'react'; 
+import { BusquedaClientes } from './utilidades/BusquedaClientes.jsx'; 
+import { BusquedaProductos } from './utilidades/ListarProductos.jsx'; 
+import { ListarMarcas } from './utilidades/ListarMarcas.jsx'; 
+import Swal from 'sweetalert2'; 
 
-export const CargarRma = () => {
-  const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
-  const [productoSeleccionado, setProductoSeleccionado] = useState(null);
+export const CargarRma = () => { 
+  const [clienteSeleccionado, setClienteSeleccionado] = useState(null); 
+  const [productoSeleccionado, setProductoSeleccionado] = useState(null); 
+  const [marcaSeleccionada, setMarcaSeleccionada] = useState(null); 
 
-  const handleClienteSeleccionado = (cliente) => {
-    setClienteSeleccionado(cliente);
-  };
 
-  const handleProductoSeleccionado = (producto) => {
-    setProductoSeleccionado(producto);
-  };
 
-  const enviarFormulario = async (e) => {
-    e.preventDefault();
-    // Lógica para enviar el formulario
-  };
-
-  let urlClientes = 'https://rmareactviteback.onrender.com/buscarCliente';
-  let urlProductos = 'https://rmareactviteback.onrender.com/buscarProductos';
-
-  if (window.location.hostname === 'localhost') {
-    urlClientes = 'http://localhost:8080/buscarCliente';
-    urlProductos = 'http://localhost:8080/buscarProductos';
+  let urlClientes = 'https://rmareactviteback.onrender.com/buscarCliente'; 
+  let urlProductos = 'https://rmareactviteback.onrender.com/buscarProductos'; 
+  let urlMarcas = 'https://rmareactviteback.onrender.com/listarMarcas';
+  let urlAgregarRma = 'https://rmareactviteback.onrender.com/agregarRma'; 
+  
+  if (window.location.hostname === 'localhost') { 
+    urlClientes = 'http://localhost:8080/buscarCliente'; 
+    urlProductos = 'http://localhost:8080/buscarProductos'; 
+    urlMarcas = 'http://localhost:8080/listarMarcas'; 
+    urlAgregarRma = 'http://localhost:8080/agregarRma';
   }
+
+  
+  const handleClienteSeleccionado = (cliente) => { 
+    setClienteSeleccionado(cliente); };
+
+  const handleProductoSeleccionado = (producto) => { 
+      setProductoSeleccionado(producto); 
+  }; 
+    
+  const handleMarcaSeleccionada = (marca) => { 
+    setMarcaSeleccionada(marca); 
+  }; 
+  
+  const enviarFormulario = async (e) => {
+     e.preventDefault(); 
+     const formData = { 
+      modelo: productoSeleccionado?.sku || '', 
+      cantidad: e.target.cantidad.value, marca: marcaSeleccionada?.nombre || '',
+       solicita: e.target.solicita.value, opLote: e.target.opLote.value || null, 
+       vencimiento: e.target.vencimiento.value || null, 
+       seEntrega: e.target.seEntrega.value || null, 
+       seRecibe: e.target.seRecibe.value || null, 
+       observaciones: e.target.observaciones.value || null, 
+       nIngreso: e.target.nIngreso.value || null, 
+       nEgreso: e.target.nEgreso.value || null, 
+       idCliente: clienteSeleccionado?.id || '' 
+      }; 
+      
+      try { 
+        console.log('Método:', 'POST'); console.log('URL:', urlAgregarRma); console.log('Body:', JSON.stringify(formData));
+        const response = await fetch(urlAgregarRma, { 
+        method: 'POST', 
+        headers: { 
+          'Content-Type': 'application/json', 
+        }, 
+        body: JSON.stringify(formData), 
+      }); 
+      
+      if (response.ok) { 
+        Swal.fire({ 
+          icon: 'success', 
+          title: 'RMA agregado', 
+          text: 'El RMA se ha agregado correctamente', 
+        }); 
+      } 
+      else { 
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'Error', 
+          text: 'Hubo un problema al agregar el RMA', 
+        }); 
+      } 
+    } 
+    catch (error) { 
+      console.error('Error al enviar el formulario:', error); 
+      Swal.fire({ 
+        icon: 'error', 
+        title: 'Error', 
+        text: 'Hubo un problema al enviar el formulario',
+      }); 
+    } 
+  }; 
+  
+  
+
 
   return (
     <div className="w-full max-w-xl bg-white rounded-lg shadow-lg shadow-gray-500 p-8 mx-auto mb-6" style={{ maxWidth: '600px', boxShadow: '0 -10px 20px rgba(0, 0, 0, 0.3)' }}>
@@ -35,7 +96,7 @@ export const CargarRma = () => {
         </div>
       </div>
       <h2 className="text-2xl font-semibold text-gray-700 text-center mb-8">Cargar RMA</h2>
-      <form id="formRma" action="/agregarRma" method="POST" className="space-y-6" onSubmit={enviarFormulario}>
+      <form id="formRma" className="space-y-6" onSubmit={enviarFormulario}>
         <div>
           <label htmlFor="clienteSearch" className="block text-sm font-medium text-gray-700 mb-1">Cliente:</label>
           <BusquedaClientes endpoint={urlClientes} onClienteSeleccionado={handleClienteSeleccionado} campos={['nombre']} />
@@ -53,13 +114,14 @@ export const CargarRma = () => {
 
         <div>
           <label htmlFor="cantidad" className="block text-sm font-medium text-gray-700 mb-1 campoOculto">Cantidad:</label>
-          <input type="number" id="cantidad" name="cantidad" min="1" className="block w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none campoOculto" required />
+          <input type="number" id="cantidad" name="cantidad" min="1" className="block w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none campoOculto" />
         </div>
 
         <div>
           <label htmlFor="marca" className="block text-sm font-medium text-gray-700 mb-1 campoOculto">Marca:</label>
-          <input type="text" id="marca" name="marca" autoComplete="off" className="block w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none campoOculto" required onChange={() => sugerirMarcas()} />
+          <ListarMarcas endpoint={urlMarcas} onMarcaSeleccionada={handleMarcaSeleccionada} campos={['nombre']} />
         </div>
+        {marcaSeleccionada && (<input type="hidden" name="idMarca" value={marcaSeleccionada.id} />)}
 
         <div>
           <label htmlFor="solicita" className="block text-sm font-medium text-gray-700 mb-1 campoOculto">Solicita:</label>
@@ -95,8 +157,8 @@ export const CargarRma = () => {
 
         <div>
           <label htmlFor="numIngreso" className="block text-sm font-medium text-gray-700 mb-1 campoOculto">N° de Ingreso:</label>
-          <input type="text" id="numIngreso" name="nIngreso" className="block w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none campoOculto" />
-        </div>
+          <input type="text" id="numIngreso" name="nIngreso" className="block w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring focus:ring-blue-300 focus:outline-none campoOculto" /> </div>
+
 
         <div>
           <label htmlFor="numEgreso" className="block text-sm font-medium text-gray-700 mb-1 campoOculto">N° de Egreso:</label>

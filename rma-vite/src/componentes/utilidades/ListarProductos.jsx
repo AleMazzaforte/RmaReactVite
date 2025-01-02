@@ -22,7 +22,7 @@ export const BusquedaProductos = ({ endpoint, onProductoSeleccionado, campos }) 
         const response = await fetch(`${endpoint}?query=${value}`);
         const data = await response.json();
         setResultados(data.filter(producto => producto.sku.toLowerCase().includes(value.toLowerCase())));
-        console.log(data);
+        
       } catch (error) {
         console.error('Error buscando productos:', error);
       } finally {
