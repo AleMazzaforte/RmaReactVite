@@ -51,7 +51,7 @@ export const CargarRma = () => {
       }; 
       
       try { 
-        console.log('Método:', 'POST'); console.log('URL:', urlAgregarRma); console.log('Body:', JSON.stringify(formData));
+        
         const response = await fetch(urlAgregarRma, { 
         method: 'POST', 
         headers: { 
