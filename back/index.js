@@ -20,7 +20,7 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'rma-vite', 'dist')));
 
 // Middleware para procesar formularios
 app.use(express.urlencoded({ extended: true }));
@@ -31,9 +31,20 @@ app.use(cookieParser());
 // Usar las rutas importadas
 app.use('/', rutas);
 
-app.get('/', (req, res) => {
-    res.send('Servidor corriendo');
-});
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static('rma-vite/dist'));
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'rma-vite', 'dist', 'index.html'));
+    });
+    
+} else {
+    app.get('/', (req, res) => {
+        res.send('Servidor corriendo');
+    });
+}
+
+
+
 
 app.listen(port, () => {
     console.log(`Servidor corriendo en puerto: ${port}`);
