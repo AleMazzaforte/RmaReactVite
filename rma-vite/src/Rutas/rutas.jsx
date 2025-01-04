@@ -32,7 +32,6 @@ export const Rutas = () => {
                   <Route path="/cargarCliente" element={<ProtectedRoute><CargarCliente /></ProtectedRoute>} />
                   <Route path="/cargarMarcas" element={<ProtectedRoute><CargarMarcas /></ProtectedRoute>} />
                   <Route path="/cargarProductos" element={<ProtectedRoute><CargarProductos /></ProtectedRoute>} />
-                  <Route path="/agregarRma" element={<ProtectedRoute><CargarRma /></ProtectedRoute>} />
                   <Route path="/gestionarRma" element={<ProtectedRoute><GestionarRma /></ProtectedRoute>} />
                   <Route path="/imprimirEtiqueta" element={<ProtectedRoute><ImprimirEtiqueta /></ProtectedRoute>} />
                   <Route path="/agregarTransporte" element={<ProtectedRoute><AgregarTransporte /></ProtectedRoute>} />
